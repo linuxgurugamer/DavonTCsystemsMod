@@ -1,0 +1,12 @@
+Changelog
+
+	Added support for the ClickThroughBlocker
+	Replaced stock toolbar code with ToolbarController
+	Added support for F2 (hide) to hide the UI
+	Added support for Pause to hide the UI
+	Added AddemblyVersion.tt
+	Added InstallChecker
+	Implemented standardized version number
+	Added .version file
+	Added support for alternate skin
+	Added stock settings page to support altSkin flag

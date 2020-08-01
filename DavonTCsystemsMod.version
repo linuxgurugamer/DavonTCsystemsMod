@@ -1,0 +1,30 @@
+{
+    "NAME":"Davon Throttle Control systems",
+    "URL":"http://raw.githubusercontent.com/linuxgurugamer/DavonTCsystemsMod/master/GameData/DavonTCsystemsMod/DavonTCsystemsMod.version",
+    "DOWNLOAD":"https://spacedock.info/mod/227",
+    "GITHUB":
+    {
+        "USERNAME":"linuxgurugamer",
+        "REPOSITORY":"DavonTCsystemsMod",
+        "ALLOW_PRE_RELEASE":false
+    },
+    "VERSION":
+    {
+        "MAJOR":0,
+        "MINOR":1,
+        "PATCH":0,
+        "BUILD":0
+    },
+    "KSP_VERSION":
+    {
+        "MAJOR":1,
+        "MINOR":8,
+        "PATCH":1
+    },
+    "KSP_VERSION_MIN":
+    {
+        "MAJOR":1,
+        "MINOR":8,
+        "PATCH":1
+    }
+}
