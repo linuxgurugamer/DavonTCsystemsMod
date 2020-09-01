@@ -10,7 +10,6 @@ using System.Reflection;
 
 using ClickThroughFix;
 using SpaceTuxUtility;
-using System.IO;
 
 namespace DifferentialThrustMod
 {
@@ -139,7 +138,7 @@ namespace DifferentialThrustMod
 
         public override void OnStart(StartState state)
         {
-            if (Log == null)
+            if (Log == null )
                 Log = new KSP_Log.Log("DavonTCsystemsMod");
             if (isActive)
             {
@@ -203,8 +202,7 @@ namespace DifferentialThrustMod
             }
         }
 
-        //public override void OnUpdate()
-        void FixedUpdate()
+        public override void OnUpdate()
         {
             ThrottleExecute();
         }
@@ -221,10 +219,10 @@ namespace DifferentialThrustMod
                 foreach (PartModule pm in p.Modules)
                 {
                     //if (pm.ClassName == "DifferentialThrust" && p.flightID != part.flightID)
-                    if (pm is DifferentialThrust && p.flightID != part.flightID)
+                    if (pm is DifferentialThrust && p.flightID != part.flightID)                    
                     {
-                        DifferentialThrust aDifferentialThrust = pm as DifferentialThrust;
-                        //aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
+                        DifferentialThrust aDifferentialThrust;
+                        aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
                         aDifferentialThrust.isPrimary = false;
                         aDifferentialThrust.Deactivate();
                         aDifferentialThrust.Events["Moduleconfig"].guiName = "TC systems";
@@ -240,7 +238,7 @@ namespace DifferentialThrustMod
                 foreach (PartModule pm in p.Modules)
                 {
                     //if (added == false && (pm.ClassName == "ModuleEngines" || pm.ClassName == "MultiModeEngine" || pm.ClassName == "ModuleEnginesFX"))
-                    if (added == false && (pm is ModuleEngines || pm is MultiModeEngine || pm is ModuleEnginesFX))
+                    if (added == false && (pm is ModuleEngines || pm is MultiModeEngine || pm is ModuleEnginesFX))                    
                     {
                         EngineList.Add(p);
                         added = true;
@@ -268,11 +266,24 @@ namespace DifferentialThrustMod
                     //if (pm.ClassName == "ModuleEngines")
                     if (pm is ModuleEngines || pm is ModuleEnginesFX)
                     {
-                        ModuleEngines cModuleEngines = pm as ModuleEngines;
+                        ModuleEngines cModuleEngines;
                         //cModuleEngines = p.Modules.OfType<ModuleEngines>().FirstOrDefault();
-
+                        cModuleEngines = (ModuleEngines)pm;
                         if (cModuleEngines.throttleLocked == false) { couldadd = true; }
                     }
+#if false                    
+                    //check if SRB
+                    if (pm.ClassName == "ModuleEnginesFX")
+                    {
+                        ModuleEnginesFX cModuleEnginesFX;
+                        cModuleEnginesFX = p.Modules.OfType<ModuleEnginesFX>().FirstOrDefault();
+                        if (cModuleEnginesFX.throttleLocked == false)
+                        {
+                            couldadd = true;
+                        }
+                        ;
+                    }
+#endif
                 }
 
                 if (dontadd == false && couldadd == true)
@@ -329,10 +340,21 @@ namespace DifferentialThrustMod
                 rDifferentialThrustEngineModule = p.Modules.OfType<DifferentialThrustEngineModule>().FirstOrDefault();
 
                 //reset engines
+                //if (rDifferentialThrustEngineModule.enginemoduletype == 0)
+                //{
+                    //ModuleEngines rModuleEngines;
+                    //rModuleEngines = p.Modules.OfType<ModuleEngines>().FirstOrDefault();
 
-                rDifferentialThrustEngineModule.PartmoduleModuleEngines.useEngineResponseTime = rDifferentialThrustEngineModule.StoredOuseEngineResponseTime;
-                rDifferentialThrustEngineModule.PartmoduleModuleEngines.engineAccelerationSpeed = rDifferentialThrustEngineModule.StoredOengineAccelerationSpeed;
-                rDifferentialThrustEngineModule.PartmoduleModuleEngines.engineDecelerationSpeed = rDifferentialThrustEngineModule.StoredOengineDecelerationSpeed;
+                    rDifferentialThrustEngineModule.PartmoduleModuleEngines.useEngineResponseTime = rDifferentialThrustEngineModule.StoredOuseEngineResponseTime;
+                    rDifferentialThrustEngineModule.PartmoduleModuleEngines.engineAccelerationSpeed = rDifferentialThrustEngineModule.StoredOengineAccelerationSpeed;
+                    rDifferentialThrustEngineModule.PartmoduleModuleEngines.engineDecelerationSpeed = rDifferentialThrustEngineModule.StoredOengineDecelerationSpeed;
+                //}
+                //else
+                //{
+                //    rDifferentialThrustEngineModule.PartmoduleModuleEnginesFX.useEngineResponseTime = rDifferentialThrustEngineModule.StoredOuseEngineResponseTime;
+                //    rDifferentialThrustEngineModule.PartmoduleModuleEnginesFX.engineAccelerationSpeed = rDifferentialThrustEngineModule.StoredOengineAccelerationSpeed;
+                //    rDifferentialThrustEngineModule.PartmoduleModuleEnginesFX.engineDecelerationSpeed = rDifferentialThrustEngineModule.StoredOengineDecelerationSpeed;
+                //}
 
                 //remove temp module from every engine
                 p.RemoveModule(rDifferentialThrustEngineModule);
@@ -492,7 +514,7 @@ namespace DifferentialThrustMod
 
                         //if (dtm.enginemoduletype == 0)
                         //{
-                        dtm.PartmoduleModuleEngines.thrustPercentage = 100f;
+                            dtm.PartmoduleModuleEngines.thrustPercentage = 100f;
                         //}
                         //else if (dtm.enginemoduletype == 1)
                         //{
@@ -505,7 +527,7 @@ namespace DifferentialThrustMod
             }
 
             //GUILayout.Label(" ");
-            if (GUILayout.Button("Center Thrust Mode"))
+            if (GUILayout.Button("Center thrust mode"))
             {
                 CenterThrust();
             }
@@ -536,6 +558,12 @@ namespace DifferentialThrustMod
             {
                 Deactivate();
             }
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUIMconfig();
+            }
+#endif
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
@@ -629,6 +657,12 @@ namespace DifferentialThrustMod
 
 
             GUILayout.BeginVertical();
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUITconfig();
+            }
+#endif
             if (GUILayout.Button("C\no\nn\nt\nr\no\nl\ns", GUILayout.Width(40), GUILayout.Height(200)))
             {
                 joystickconfig();
@@ -768,6 +802,12 @@ namespace DifferentialThrustMod
                         break;
                 }
             }
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUIJconfig();
+            }
+#endif
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
@@ -816,24 +856,30 @@ namespace DifferentialThrustMod
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Save Profile", GUILayout.Width(100)))
+            if (GUILayout.Button("Save Profile", GUILayout.Width(80)))
             {
                 saveprofile(StrProfName);
                 updateProfilesList();
                 closeGUISconfig();
             }
 
-            if (GUILayout.Button("Load Profile", GUILayout.Width(100)))
+            if (GUILayout.Button("Load Profile", GUILayout.Width(80)))
             {
                 loadprofile(StrProfName);
                 updateProfilesList();
                 closeGUISconfig();
             }
-            if (GUILayout.Button("Delete", GUILayout.Width(100)))
+            if (GUILayout.Button("del", GUILayout.Width(40)))
             {
                 System.IO.File.Delete(GamePath + ProfilesPath + StrProfName);
                 updateProfilesList();
             }
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUISconfig();
+            }
+#endif
             GUILayout.EndHorizontal();
 
             GUILayout.EndVertical();
@@ -859,59 +905,52 @@ namespace DifferentialThrustMod
             data[8] = Throttle4ControlDes;
             data[9] = boolThrSte.ToString();
             data[10] = strTorque;
-            if (!Directory.Exists(GamePath + ProfilesPath))
-                Directory.CreateDirectory(GamePath + ProfilesPath);
+
             System.IO.File.WriteAllLines(GamePath + ProfilesPath + profile, data);
         }
 
         public void loadprofile(string profile)
         {
-            if (Directory.Exists(GamePath + ProfilesPath) && File.Exists(GamePath + ProfilesPath + profile))
-            {
-                string[] data = System.IO.File.ReadAllLines(GamePath + ProfilesPath + profile);
+            string[] data = System.IO.File.ReadAllLines(GamePath + ProfilesPath + profile);
 
-                savedEngCon = data[0];
-                LoadEngineSettings();
+            savedEngCon = data[0];
+            LoadEngineSettings();
 
-                CenterThrustDirection = Convert.ToInt32(data[1]);
-                setDirection(CenterThrustDirection);
-                selDirGridInt = CenterThrustDirection;
+            CenterThrustDirection = Convert.ToInt32(data[1]);
+            setDirection(CenterThrustDirection);
+            selDirGridInt = CenterThrustDirection;
 
-                selEngGridInt = Convert.ToInt32(data[2]);
-                strAdjStr = data[3];
-                selOnOffGridInt = Convert.ToInt32(data[4]);
-                CenterThrustToggle = (selOnOffGridInt == 1);
-                UpdateCenterThrust();
+            selEngGridInt = Convert.ToInt32(data[2]);
+            strAdjStr = data[3];
+            selOnOffGridInt = Convert.ToInt32(data[4]);
+            CenterThrustToggle = (selOnOffGridInt == 1);
+            UpdateCenterThrust();
 
-                Throttle1ControlDes = data[5];
-                Throttle2ControlDes = data[6];
-                Throttle3ControlDes = data[7];
-                Throttle4ControlDes = data[8];
+            Throttle1ControlDes = data[5];
+            Throttle2ControlDes = data[6];
+            Throttle3ControlDes = data[7];
+            Throttle4ControlDes = data[8];
 
-                boolThrSte = (data[9] == "True");
-                CenterThrustToggle = boolThrSte;
-                strTorque = data[10];
-                float.TryParse(strTorque, out throttleSteeringTorque);
-            }
+            boolThrSte = (data[9] == "True");
+            CenterThrustToggle = boolThrSte;
+            strTorque = data[10];
+            float.TryParse(strTorque, out throttleSteeringTorque);
         }
 
         private void updateProfilesList()
         {
-            if (Directory.Exists(GamePath + ProfilesPath))
+            string[] profilePaths = System.IO.Directory.GetFiles(GamePath + ProfilesPath);
+            profiles.Clear();
+            foreach (string file in profilePaths)
             {
-                string[] profilePaths = System.IO.Directory.GetFiles(GamePath + ProfilesPath);
-                profiles.Clear();
-                foreach (string file in profilePaths)
-                {
-                    profiles.Add(System.IO.Path.GetFileName(file));
-                }
+                profiles.Add(System.IO.Path.GetFileName(file));
             }
         }
 
         public void ProfileWindow()
         {
-            drawguiSconfig = !drawguiSconfig;
-            if (drawguiSconfig)
+            drawguiDconfig = !drawguiDconfig;
+            if (drawguiDconfig)
             {
                 GamePath = System.IO.Directory.GetParent(Application.dataPath);
                 updateProfilesList();
@@ -920,7 +959,7 @@ namespace DifferentialThrustMod
 
         public void closeGUISconfig()
         {
-            drawguiSconfig = false;
+            drawguiDconfig = false;
         }
 
         /// <summary>
@@ -976,8 +1015,8 @@ namespace DifferentialThrustMod
 
                 GUILayout.BeginHorizontal();
                 strTorque = GUILayout.TextField(strTorque, 5, GUILayout.Width(50));
-                GUILayout.Label("kN*m", GUILayout.Width(45));
-                if (GUILayout.Button("Set Torque", GUILayout.Width(90), GUILayout.Height(22)))
+                GUILayout.Label("kN*m", GUILayout.Width(35));
+                if (GUILayout.Button("set", GUILayout.Width(30), GUILayout.Height(22)))
                 {
                     float.TryParse(strTorque, out throttleSteeringTorque);
                 }
@@ -990,6 +1029,12 @@ namespace DifferentialThrustMod
                 Directionwindow();
             }
 
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUICconfig();
+            }
+#endif
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             GUI.DragWindow();
@@ -1095,6 +1140,12 @@ namespace DifferentialThrustMod
                 closeGUIDconfig();
             }
 
+#if false
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                closeGUIDconfig();
+            }
+#endif
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
             GUI.DragWindow();
@@ -1364,7 +1415,7 @@ namespace DifferentialThrustMod
         //run each physics cycle
         public void centerThrustInSim()
         {
-            CoM = vessel.ReferenceTransform.InverseTransformPoint(vessel.CoM);
+            CoM = vessel.ReferenceTransform.InverseTransformPoint(vessel.CoM + vessel.rb_velocity * Time.deltaTime + 0.5 * vessel.acceleration * Time.deltaTime * Time.deltaTime);
 
             updateEngineList();
 
@@ -1472,16 +1523,20 @@ namespace DifferentialThrustMod
                 if (thrustArea)
                 {
                     EngSelect.DifMod.aim = EngSelect.DifMod.aim - adjustmentSize;
-                    if (EngSelect.DifMod.aim <= EngSelect.aimlowest) { EngSelect.DifMod.aim = EngSelect.aimlowest; }
+                    if (EngSelect.DifMod.aim <= EngSelect.aimlowest)
+                        EngSelect.DifMod.aim = EngSelect.aimlowest;
+
                 }
                 else
                 {
                     EngSelect.DifMod.aim = EngSelect.DifMod.aim + adjustmentSize;
-                    if (EngSelect.DifMod.aim >= EngSelect.aimhighest) { EngSelect.DifMod.aim = EngSelect.aimhighest; }
+                    if (EngSelect.DifMod.aim >= EngSelect.aimhighest)
+                    {
+                        EngSelect.DifMod.aim = EngSelect.aimhighest;
+                    }
                 }
                 previousCoTX = CoTX;
                 previousCoTY = CoTY;
-
             }
         }
 
@@ -1493,7 +1548,7 @@ namespace DifferentialThrustMod
             bool skip;
             float distance = 0f;
             float input = 0f;
-            float simulatedThrust;
+            float simulationfactor;
             float SumMoments = 0f;
             float SumThrusts = 0f;
 
@@ -1514,53 +1569,56 @@ namespace DifferentialThrustMod
                 skip = false;
                 if (simE.hasEngineModule == true)
                 {
-                    if (simE.DifMod.CenterThrustMode == "ignore") { skip = true; }
+                    if (simE.DifMod.CenterThrustMode == "ignore")
+                    {
+                        skip = true;
+                    }
 
 
                     if (simE.DifMod.CenterThrust)
                     {
-                        if (simE.engineactive)
+                        simulationfactor = (simE.DifMod.aim / simE.thrustPercentage);
+                        //don't divide by zero
+                        if (simE.thrustPercentage <= 0)
                         {
-                            if (simE.thrustPercentage > 0)
-                            {
-                                simulatedThrust = simE.minThrust + ((simE.measuredThrust - simE.minThrust) * (simE.DifMod.aim / simE.thrustPercentage));
-                            }
-                            else
-                            {
-                                simulatedThrust = simE.minThrust + ((simE.maxThrust - simE.minThrust) * simE.DifMod.throttleSvalue * (simE.DifMod.aim / 100));
-                            }
-                        }
-                        else
-                        {
-                            simulatedThrust = 0;
+                            simulationfactor = 1;
+                            skip = true;
                         }
                     }
                     else
                     {
-                        simulatedThrust = simE.measuredThrust;
+                        simulationfactor = 1;
                     }
                 }
                 else
                 {
-                    simulatedThrust = simE.measuredThrust;
+                    simulationfactor = 1;
                 }
 
                 if (skip == false)
                 {
-                    SumMoments = SumMoments + ((distance + 1000) * simulatedThrust);
-                    SumThrusts = SumThrusts + simulatedThrust;
+                    SumMoments = SumMoments + ((distance + 1000) * simE.measuredThrust * simulationfactor);
+                    SumThrusts = SumThrusts + (simE.measuredThrust * simulationfactor);
                 }
             }
 
             if (ThrottleSteeringToggle)
             {
                 if (input > 0)
-                { SumMoments = SumMoments + ((1 + 1000) * input * throttleSteeringTorque); }
-                if (input < 0) { SumMoments = SumMoments + ((-1 + 1000) * -input * throttleSteeringTorque); }
+                {
+                    SumMoments = SumMoments + ((1 + 1000) * input * throttleSteeringTorque);
+                }
+                if (input < 0)
+                {
+                    SumMoments = SumMoments + ((-1 + 1000) * -input * throttleSteeringTorque);
+                }
                 SumThrusts = SumThrusts + (Math.Abs(input) * throttleSteeringTorque);
             }
 
-            if (SumThrusts == 0) { return 0; }
+            if (SumThrusts == 0)
+            {
+                return 0;
+            }
             return SumMoments / SumThrusts - 1000;
         }
 
@@ -1651,13 +1709,19 @@ namespace DifferentialThrustMod
             if (adjustmentSize > 0.1 && (disBetw > 0.2 * disPrev /*|| disCurr < 0.75 * disPrev*/))
             {
                 adjustmentSize = adjustmentSize / 2f;
-                if (adjustmentSize < 0.1) { adjustmentSize = 0.1f; }
+                if (adjustmentSize < 0.1)
+                {
+                    adjustmentSize = 0.1f;
+                }
                 //print("down " + adjustmentSize);
             }
             if (adjustmentSize < 10 && (disBetw < 0.1 * disPrev /*&& disCurr > 0.75 * disPrev*/))
             {
                 adjustmentSize = adjustmentSize * 1.5f;
-                if (adjustmentSize > 10) { adjustmentSize = 10f; }
+                if (adjustmentSize > 10)
+                {
+                    adjustmentSize = 10f;
+                }
                 //print("--up " + adjustmentSize); 
             }
         }

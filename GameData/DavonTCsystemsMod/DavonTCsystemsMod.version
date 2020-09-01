@@ -1,10 +1,10 @@
 {
-    "NAME":"L-Tech Scientific Industries",
-    "URL":"http://raw.githubusercontent.com/linuxgurugamer/DavonTCsystemsMod/master/GameData/DavonTCsystemsMod/DavonTCsystemsMod.version",
+    "NAME":"Davon Throttle Control systems",
+    "URL":"https://raw.githubusercontent.com/linuxgurugamer/DavonTCsystemsMod/master/DavonTCsystemsMod.version",
     "DOWNLOAD":"https://spacedock.info/mod/227",
     "GITHUB":
     {
-        "USERNAME":"Olympic1",
+        "USERNAME":"linuxgurugamer",
         "REPOSITORY":"DavonTCsystemsMod",
         "ALLOW_PRE_RELEASE":false
     },
@@ -13,7 +13,7 @@
         "MAJOR":0,
         "MINOR":1,
         "PATCH":0,
-        "BUILD":0
+        "BUILD":2
     },
     "KSP_VERSION":
     {

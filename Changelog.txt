@@ -1,5 +1,6 @@
 Changelog
 
+0.1.0.2
 	Added support for the ClickThroughBlocker
 	Replaced stock toolbar code with ToolbarController
 	Added support for F2 (hide) to hide the UI
@@ -10,3 +11,15 @@ Changelog
 	Added .version file
 	Added support for alternate skin
 	Added stock settings page to support altSkin flag
+	Changed the updating of the toolbar from being in OnGUI to a coroutine, 1/second
+	Removed unnecessary functions from the DifferentialThrust.cs, by calling all the display methods from the OnGUI instead of additional methods
+	Added close button at upper right of all windows & removed old X button
+	Moved GUI.DragWindow() to end of each window function
+	Replaced hard-coded window IDs with generated from WindowHelper
+	Made buttons toggle instead of just enabling windows
+	New dependencies
+		ClickThroughBlocker
+		ToolBarController
+		SpaceTuxLibrary
+	Most Linq calls of FirstorDefault have been replaced with an "as" assignment
+	OnUpdate changed to FixedUpdate

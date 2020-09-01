@@ -44,7 +44,7 @@ namespace DifferentialThrustMod
         [UI_FloatRange(stepIncrement = 0.001f, maxValue = 100f, minValue = 0f)]
         public float aim = 100;
 
-        [KSPField(isPersistant = false, guiActive = true, guiName = "Network", guiUnits = "")]
+        [KSPField(isPersistant = false, guiActive = true, guiName = "net", guiUnits = "")]
         [UI_Toggle(disabledText = "Connected", enabledText = "Isolated")]
         public bool isolated = false;
 
@@ -67,23 +67,29 @@ namespace DifferentialThrustMod
             Events["CycleCenterThrustMode"].guiName = "Center thrust: " + CenterThrustMode;
         }
 
-        void Start()
+        //Adjust engines every cycle. Purposfull OnUpdate instead of OnFixedUpdate.
+        public override void OnUpdate()
         {
             if (booted == false)
             {
                 boot();
+                return;
             }
-        }
-
-        //Adjust engines every cycle. Purposfull OnUpdate instead of OnFixedUpdate.
-        //public override void OnUpdate()
-        void FixedUpdate()
-        {
-
+            
+            //if (enginemoduletype == 0)
+            //{
             if (PartmoduleModuleEngines.throttleLocked == true)
             {
                 return;
             }
+            //}
+            //else
+            //{
+            //    if (PartmoduleModuleEnginesFX.throttleLocked == true)
+            //    {
+            //        return;
+            //    }
+            //}
 
             if (enginemoduletype == 2)
             {
@@ -96,11 +102,23 @@ namespace DifferentialThrustMod
                     return;
                 }
             }
+
+            //if (enginemoduletype == 0)
+            //{
             if (!PartmoduleModuleEngines.EngineIgnited || PartmoduleModuleEngines.engineShutdown)
             {
                 PartmoduleModuleEngines.currentThrottle = 0;
                 return;
             }
+            //}
+            //else
+            //{
+            //    if (!PartmoduleModuleEnginesFX.EngineIgnited || PartmoduleModuleEnginesFX.engineShutdown)
+            //    {
+            //        PartmoduleModuleEnginesFX.currentThrottle = 0;
+            //        return;
+            //    }
+            //}
 
             //set to correct throttle
             throttleSelect = (int)Math.Round(throttleFloatSelect, 0);
@@ -119,7 +137,14 @@ namespace DifferentialThrustMod
             //if center thrust is enabled for this engine, set it to the desired aimpoint
             if (CenterThrust == true)
             {
+                //if (enginemoduletype == 0)
+                //{
                 PartmoduleModuleEngines.thrustPercentage = aim;
+                //}
+                //else
+                //{
+                //    PartmoduleModuleEnginesFX.thrustPercentage = aim;
+                //}
                 Fields["aim"].guiActive = true;
 
                 levelThrust = 100f;
@@ -142,7 +167,7 @@ namespace DifferentialThrustMod
                 throttleIvalue = levelThrust / 100;
             }
 
-
+            
             //Set throttle not lower than minimum thrust.
             if (PartmoduleModuleEngines.minThrust != 0 && PartmoduleModuleEngines.maxThrust != 0)
             {
@@ -157,6 +182,11 @@ namespace DifferentialThrustMod
 
         private void setThrottle(float Throttle)
         {
+            //PartmoduleModuleEngines.currentThrottle = Throttle;
+
+
+            //if (enginemoduletype == 0)
+            //{
             //With thanks to ZRM, maker of Kerbcom Avionics, and the help of the code of the Throttle Steering mod made by ruffus.
             if (StoredOuseEngineResponseTime && !CenterThrust)
             {
@@ -169,6 +199,22 @@ namespace DifferentialThrustMod
             {
                 PartmoduleModuleEngines.currentThrottle = Throttle;
             }
+            //}
+            //else
+            //{
+            //    //With thanks to ZRM, maker of Kerbcom Avionics, and the help of the code of the Throttle Steering mod made by ruffus.
+            //    if (StoredOuseEngineResponseTime && !CenterThrust)
+            //    {
+            //        if (PartmoduleModuleEnginesFX.currentThrottle > Throttle)
+            //            PartmoduleModuleEnginesFX.currentThrottle = Mathf.Lerp(PartmoduleModuleEnginesFX.currentThrottle, Throttle, StoredOengineDecelerationSpeed * Time.deltaTime);
+            //        else
+            //            PartmoduleModuleEnginesFX.currentThrottle = Mathf.Lerp(PartmoduleModuleEnginesFX.currentThrottle, Throttle, StoredOengineAccelerationSpeed * Time.deltaTime);
+            //    }
+            //    else
+            //    {
+            //        PartmoduleModuleEnginesFX.currentThrottle = Throttle;
+            //    }
+            //}
         }
 
         //first startup boot sequence
@@ -229,6 +275,27 @@ namespace DifferentialThrustMod
                         aim = PartmoduleModuleEngines.thrustPercentage;
 
                     }
+                    //if (pm is ModuleEnginesFX)
+                    //{
+                    //    enginemoduletype = 1;
+                    //    PartmoduleModuleEnginesFX = (ModuleEnginesFX)pm;
+                    //
+                    //    //store original values before engine control takeover
+                    //    StoredOuseEngineResponseTime = PartmoduleModuleEnginesFX.useEngineResponseTime;
+                    //    StoredOengineAccelerationSpeed = PartmoduleModuleEnginesFX.engineAccelerationSpeed;
+                    //    StoredOengineDecelerationSpeed = PartmoduleModuleEnginesFX.engineDecelerationSpeed;
+                    //
+                    //    //This settings must be set to true to be able to control engines with currentThrottle. 
+                    //    //Found this with the help of the code of the Throttle Steering mod made by ruffus. 
+                    //    PartmoduleModuleEnginesFX.useEngineResponseTime = true;
+                    //
+                    //    //This eliminates the influence of the main throttle on engines
+                    //    PartmoduleModuleEnginesFX.engineAccelerationSpeed = 0.0f;
+                    //    PartmoduleModuleEnginesFX.engineDecelerationSpeed = 0.0f;
+                    //
+                    //    //set aim to chosen limit thrust
+                    //    aim = PartmoduleModuleEnginesFX.thrustPercentage;
+                    //}
                 }
             }
 
@@ -264,8 +331,8 @@ namespace DifferentialThrustMod
                     {
                         if (pm is DifferentialThrustEngineModule)
                         {
-                            DifferentialThrustEngineModule aDifferentialThrustEngineModule = pm as DifferentialThrustEngineModule; ;
-                            //aDifferentialThrustEngineModule = p.Modules.OfType<DifferentialThrustEngineModule>().FirstOrDefault();
+                            DifferentialThrustEngineModule aDifferentialThrustEngineModule;
+                            aDifferentialThrustEngineModule = p.Modules.OfType<DifferentialThrustEngineModule>().FirstOrDefault();
 
                             if (aDifferentialThrustEngineModule.isolated == false)
                             {
@@ -285,6 +352,13 @@ namespace DifferentialThrustMod
 
                                         aModuleEngines.thrustPercentage = PartmoduleModuleEngines.thrustPercentage;
                                     }
+                                    //if (pmt is ModuleEnginesFX)
+                                    //{
+                                    //    ModuleEnginesFX aModuleEnginesFX;
+                                    //    aModuleEnginesFX = (ModuleEnginesFX)pmt;
+                                    //
+                                    //    aModuleEnginesFX.thrustPercentage = PartmoduleModuleEnginesFX.thrustPercentage;
+                                    //}
                                 }
                             }
                         }

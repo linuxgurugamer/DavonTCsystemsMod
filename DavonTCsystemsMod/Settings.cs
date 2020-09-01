@@ -20,7 +20,7 @@ namespace DifferentialThrustMod
 
         [GameParameters.CustomParameterUI("Use alternate skin",
                   toolTip = "Use a more minimiliast skin, can also be set in the main Davon window")]
-        public bool useAltSkin = false;
+        public bool useAltSkin = true;
 
 
         public override void SetDifficultyPreset(GameParameters.Preset preset) { }

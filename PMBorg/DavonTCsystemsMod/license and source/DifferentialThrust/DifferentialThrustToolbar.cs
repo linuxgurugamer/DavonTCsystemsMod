@@ -2,84 +2,84 @@
 //License GPL v2.0 (GNU General Public License)
 // Namespace Declaration 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine;
 using System.Reflection;
-using ToolbarControl_NS;
-using ClickThroughFix;
-
-
-using KSP.UI;
+using UnityEngine;
 using KSP.UI.Screens;
-
 
 namespace DifferentialThrustMod
 {
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class DifferentialThrustToolbar : MonoBehaviour
     {
+        //stock toolbar button
+        private static ApplicationLauncherButton toolBarButton;
+        private static Texture2D toolBarButtonTexture;
 
         private double lastUpdateToolBarTime = 0.0f;
 
-        internal const string MODID = "DavonTCsystemsMod";
-        internal const string MODNAME = "Davon Throttle Control systems";
-
-        internal static ToolbarControl toolbarControl;
-
-        void Start()
+        public void Awake()
         {
-            StartCoroutine("UpdateToolbar");
+            //nothing
         }
 
-        void OnDestroy()
+        void onDestroy()
         {
-            StopCoroutine("UpdateToolbar");
+            if (toolBarButton != null) { removeToolbarButton(); }
         }
 
-        IEnumerator UpdateToolbar()
+        private void OnGUI()
         {
-            while (true)
+            if (Event.current.type == EventType.Repaint || Event.current.isMouse)
             {
-                updateToolBar();
-                yield return new WaitForSeconds(1f);
+                // preDraw code
             }
+            drawGUI();
+        }
+
+        private void drawGUI()
+        {
+            //Toolbar button
+            updateToolBar();
+        }
+
+        private void OnDraw()
+        {
+            updateToolBar();
         }
 
         private void updateToolBar()
         {
-            if (toolbarControl == null && hasDifferentialThrustModule()) { addToolbarButton(); }
-            if (toolbarControl != null && !hasDifferentialThrustModule()) { removeToolbarButton(); }
+
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT || (lastUpdateToolBarTime + 2) > Planetarium.GetUniversalTime() || !ApplicationLauncher.Ready) { return; }
+
+            if (toolBarButton == null && hasDifferentialThrustModule()) { addToolbarButton(); }
+            if (toolBarButton != null && !hasDifferentialThrustModule()) { removeToolbarButton(); }
 
             lastUpdateToolBarTime = Planetarium.GetUniversalTime();
         }
 
         private void addToolbarButton()
         {
-            if (toolbarControl == null)
-            {
-                toolbarControl = this.gameObject.AddComponent<ToolbarControl>();
-                toolbarControl.AddToAllToolbars(
-                    onToggleOn, onToggleOff,
-                    ApplicationLauncher.AppScenes.FLIGHT,
-                    MODID,
-                    "DavonButton",
-                    "DavonTCsystemsMod/PluginData/Textures/TCbutton-38",
-                    "DavonTCsystemsMod/PluginData/Textures/TCbutton-24",
-                    MODNAME
-                    );
-            }
+            toolBarButtonTexture = GameDatabase.Instance.GetTexture("DavonTCsystemsMod/Textures/TCbutton", false);
+
+            toolBarButton = ApplicationLauncher.Instance.AddModApplication(
+                                onToggleOn,
+                                onToggleOff,
+                                null,
+                                null,
+                                null,
+                                null,
+                                ApplicationLauncher.AppScenes.FLIGHT,
+                                toolBarButtonTexture);
         }
 
         private void removeToolbarButton()
         {
-            if (toolbarControl != null)
-            {
-                toolbarControl.OnDestroy();
-                Destroy(toolbarControl);
-            }
+            ApplicationLauncher.Instance.RemoveModApplication(toolBarButton);
+            toolBarButton = null;
         }
 
         void onToggleOn()
@@ -102,7 +102,7 @@ namespace DifferentialThrustMod
             {
                 foreach (PartModule pm in p.Modules)
                 {
-                    if (pm.ClassName == "DifferentialThrust")
+                    if (pm is DifferentialThrust)
                     {
                         return (true);
                     }
@@ -119,8 +119,8 @@ namespace DifferentialThrustMod
                 {
                     if (pm is DifferentialThrust)
                     {
-                        DifferentialThrust aDifferentialThrust = pm as DifferentialThrust;
-                        //aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
+                        DifferentialThrust aDifferentialThrust;
+                        aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
                         if (aDifferentialThrust.isPrimary) { aDifferentialThrust.toggleModuleOn(); return true; }
                     }
                 }
@@ -136,8 +136,8 @@ namespace DifferentialThrustMod
                 {
                     if (pm is DifferentialThrust)
                     {
-                        DifferentialThrust aDifferentialThrust = pm as DifferentialThrust; ;
-                        //aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
+                        DifferentialThrust aDifferentialThrust;
+                        aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
                         aDifferentialThrust.isPrimary = true;
                         return;
                     }
@@ -153,8 +153,8 @@ namespace DifferentialThrustMod
                 {
                     if (pm is DifferentialThrust)
                     {
-                        DifferentialThrust aDifferentialThrust = pm as DifferentialThrust;
-                        //aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
+                        DifferentialThrust aDifferentialThrust;
+                        aDifferentialThrust = p.Modules.OfType<DifferentialThrust>().FirstOrDefault();
                         aDifferentialThrust.toggleModuleOff();
                     }
                 }
