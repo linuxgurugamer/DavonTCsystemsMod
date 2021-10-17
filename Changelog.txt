@@ -1,5 +1,9 @@
 Changelog
 
+0.1.0.3
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
 0.1.0.2
 	Added support for the ClickThroughBlocker
 	Replaced stock toolbar code with ToolbarController
