@@ -1,5 +1,8 @@
 Changelog
 
+0.1.0.4
+	Fixed path for loading images (broken by new launcher)
+
 0.1.0.3
 	Added AssemblyFileVersion
 	Updated version file for 1.12
