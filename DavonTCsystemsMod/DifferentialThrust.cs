@@ -75,10 +75,11 @@ namespace DifferentialThrustMod
 
         static int id_, idC, idT, idD, idS, idJ;
 
+
         //Profile window (GUI)
-        System.IO.DirectoryInfo GamePath;
+        //System.IO.DirectoryInfo GamePath;
         List<string> profiles = new List<string>();
-        string ProfilesPath = "/GameData/DavonTCsystemsMod/PluginData/Profiles/";
+        string ProfilesPath { get { return KSPUtil.ApplicationRootPath + "GameData/DavonTCsystemsMod/PluginData/Profiles/"; } }
         string StrProfName = "untitled profile";
         Vector2 scrollPosition;
 
@@ -831,7 +832,7 @@ namespace DifferentialThrustMod
             }
             if (GUILayout.Button("Delete", GUILayout.Width(100)))
             {
-                System.IO.File.Delete(GamePath + ProfilesPath + StrProfName);
+                System.IO.File.Delete( ProfilesPath + StrProfName);
                 updateProfilesList();
             }
             GUILayout.EndHorizontal();
@@ -859,16 +860,16 @@ namespace DifferentialThrustMod
             data[8] = Throttle4ControlDes;
             data[9] = boolThrSte.ToString();
             data[10] = strTorque;
-            if (!Directory.Exists(GamePath + ProfilesPath))
-                Directory.CreateDirectory(GamePath + ProfilesPath);
-            System.IO.File.WriteAllLines(GamePath + ProfilesPath + profile, data);
+            if (!Directory.Exists( ProfilesPath))
+                Directory.CreateDirectory( ProfilesPath);
+            System.IO.File.WriteAllLines( ProfilesPath + profile, data);
         }
 
         public void loadprofile(string profile)
         {
-            if (Directory.Exists(GamePath + ProfilesPath) && File.Exists(GamePath + ProfilesPath + profile))
+            if (Directory.Exists( ProfilesPath) && File.Exists( ProfilesPath + profile))
             {
-                string[] data = System.IO.File.ReadAllLines(GamePath + ProfilesPath + profile);
+                string[] data = System.IO.File.ReadAllLines( ProfilesPath + profile);
 
                 savedEngCon = data[0];
                 LoadEngineSettings();
@@ -897,9 +898,9 @@ namespace DifferentialThrustMod
 
         private void updateProfilesList()
         {
-            if (Directory.Exists(GamePath + ProfilesPath))
+            if (Directory.Exists( ProfilesPath))
             {
-                string[] profilePaths = System.IO.Directory.GetFiles(GamePath + ProfilesPath);
+                string[] profilePaths = System.IO.Directory.GetFiles( ProfilesPath);
                 profiles.Clear();
                 foreach (string file in profilePaths)
                 {
@@ -913,7 +914,7 @@ namespace DifferentialThrustMod
             drawguiSconfig = !drawguiSconfig;
             if (drawguiSconfig)
             {
-                GamePath = System.IO.Directory.GetParent(Application.dataPath);
+                //GamePath = System.IO.Directory.GetParent(Application.dataPath);
                 updateProfilesList();
             }
         }

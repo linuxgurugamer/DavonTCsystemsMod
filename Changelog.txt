@@ -1,5 +1,8 @@
 Changelog
 
+0.1.0.5
+	Better fix for paths
+
 0.1.0.4
 	Fixed path for loading images (broken by new launcher)
 
